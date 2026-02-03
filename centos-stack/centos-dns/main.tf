@@ -15,10 +15,8 @@ resource "libvirt_domain" "centos_dns" {
     mode = "host-passthrough"
   }
 
-  # --- Boot Logic (Kernel/Initrd) ---
-  # Only attach kernel/initrd during installation phase (boot_from_kernel = true)
-  kernel = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/vmlinuz-c9") : null
-  initrd = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/initrd-c9.img") : null
+  # --- EFI Configuration ---
+  firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
 
   # --- Kernel Arguments (CMDLINE) ---
   # FIX: Using List of Maps for provider v0.7.6 compatibility.

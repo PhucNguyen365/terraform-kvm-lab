@@ -15,21 +15,14 @@ resource "libvirt_domain" "centos_web" {
     mode = "host-passthrough"
   }
 
-  # --- Boot Logic ---
-  kernel = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/vmlinuz-c9") : null
-  initrd = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/initrd-c9.img") : null
+  # --- EFI Configuration ---
+  firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
 
-  # --- Kernel Arguments (CMDLINE) ---
-  # FIX: List of Maps format for v0.7.6
-  cmdline = var.boot_from_kernel ? [
+  cmdline = [
     { "console" = "tty0" },
     { "console" = "ttyS0,115200n8" },
     { "inst.ks" = "hd:LABEL=OEMDRV:/ks.cfg" }
-  ] : []
-
-  boot_device {
-    dev = ["hd", "cdrom"]
-  }
+  ]
 
   # --- Disks ---
   disk {
