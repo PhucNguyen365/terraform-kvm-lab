@@ -1,0 +1,24 @@
+# --- TERRAFORM ---
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# --- KVM & DISK IMAGES ---
+*.iso
+*.qcow2
+*.img
+OS_Resources/
+
+# --- LOGS & TEMPORARY FILES ---
+*.log
+*.tmp
+
+# --- OS SPECIFIC (UBUNTU/LINUX) ---
+.DS_Store
+.directory
+.nfs*
+
+# --- IDE (VS CODE) ---
+.vscode/
+.history/
