@@ -17,8 +17,8 @@ resource "libvirt_domain" "centos_dns" {
 
   # --- Boot Logic (Kernel/Initrd) ---
   # Only attach kernel/initrd during installation phase (boot_from_kernel = true)
-  kernel = var.boot_from_kernel ? "../../OS_Resources/vmlinuz-c9" : null
-  initrd = var.boot_from_kernel ? "../../OS_Resources/initrd-c9.img" : null
+  kernel = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/vmlinuz-c9") : null
+  initrd = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/initrd-c9.img") : null
 
   # --- Kernel Arguments (CMDLINE) ---
   # FIX: Using List of Maps for provider v0.7.6 compatibility.
@@ -42,12 +42,12 @@ resource "libvirt_domain" "centos_dns" {
 
   # 2. Installer ISO (Shared Resource)
   disk {
-    file = "../../OS_Resources/CentOS-9-DVD.iso"
+    file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
   }
 
   # 3. Kickstart ISO (Local generated artifact)
   disk {
-    file = "${path.module}/ksdata-centos-dns.iso"
+    file = abspath("${path.module}/ksdata-centos-dns.iso")
   }
 
   # --- Network ---

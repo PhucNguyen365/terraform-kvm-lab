@@ -16,8 +16,8 @@ resource "libvirt_domain" "centos_web" {
   }
 
   # --- Boot Logic ---
-  kernel = var.boot_from_kernel ? "../../OS_Resources/vmlinuz-c9" : null
-  initrd = var.boot_from_kernel ? "../../OS_Resources/initrd-c9.img" : null
+  kernel = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/vmlinuz-c9") : null
+  initrd = var.boot_from_kernel ? abspath("${path.module}/../../OS_Resources/initrd-c9.img") : null
 
   # --- Kernel Arguments (CMDLINE) ---
   # FIX: List of Maps format for v0.7.6
@@ -36,10 +36,10 @@ resource "libvirt_domain" "centos_web" {
     volume_id = libvirt_volume.web_disk.id
   }
   disk {
-    file = "../../OS_Resources/CentOS-9-DVD.iso"
+    file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
   }
   disk {
-    file = "${path.module}/ksdata-centos-web.iso"
+    file = abspath("${path.module}/ksdata-centos-web.iso")
   }
 
   # --- Network ---
