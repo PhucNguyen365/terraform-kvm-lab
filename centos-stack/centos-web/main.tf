@@ -8,49 +8,48 @@ resource "libvirt_volume" "web_disk" {
 # --- Domain Configuration ---
 resource "libvirt_domain" "centos_web" {
   name   = "centos-web"
-  memory = "4096" # 4GB for GUI
+  memory = "4096" # 4GB RAM for GUI performance
   vcpu   = 2
 
   cpu {
     mode = "host-passthrough"
   }
 
-  # --- Smart Boot Logic ---
-  # Only load kernel if boot_from_kernel is true (Install mode)
+  # --- Boot Logic ---
   kernel = var.boot_from_kernel ? "../../OS_Resources/vmlinuz-c9" : null
   initrd = var.boot_from_kernel ? "../../OS_Resources/initrd-c9.img" : null
 
-  # Kernel arguments for installation
-  arguments = var.boot_from_kernel ? "console=tty0 console=ttyS0,115200n8 inst.ks=hd:LABEL=OEMDRV:/ks.cfg" : null
+  # --- Kernel Arguments (CMDLINE) ---
+  # FIX: List of Maps format for v0.7.6
+  cmdline = var.boot_from_kernel ? [
+    { "console" = "tty0" },
+    { "console" = "ttyS0,115200n8" },
+    { "inst.ks" = "hd:LABEL=OEMDRV:/ks.cfg" }
+  ] : []
 
-  # Boot priority
   boot_device {
     dev = ["hd", "cdrom"]
   }
 
   # --- Disks ---
-  # 1. Main OS Disk
   disk {
     volume_id = libvirt_volume.web_disk.id
   }
-
-  # 2. Installer ISO (Shared Resource)
   disk {
     file = "../../OS_Resources/CentOS-9-DVD.iso"
   }
-
-  # 3. Kickstart ISO (Local Artifact)
   disk {
     file = "${path.module}/ksdata-centos-web.iso"
   }
 
-  # --- Network & Graphics ---
+  # --- Network ---
   network_interface {
     network_name   = "default"
     wait_for_lease = true
   }
 
-  # Graphics for GUI (Spice/QXL)
+  # --- Graphics for GUI ---
+  # QXL is required for decent GUI performance in KVM
   video {
     type = "qxl"
   }
