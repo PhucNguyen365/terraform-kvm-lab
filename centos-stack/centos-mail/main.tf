@@ -16,19 +16,7 @@ resource "libvirt_domain" "centos_mail" {
   }
 
   # --- EFI Configuration ---
-  firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
-
-  # --- Kernel Arguments (CMDLINE) ---
-  # FIX: List of Maps format for v0.7.6
-  cmdline = var.boot_from_kernel ? [
-    { "console" = "tty0" },
-    { "console" = "ttyS0,115200n8" },
-    { "inst.ks" = "hd:LABEL=OEMDRV:/ks.cfg" }
-  ] : []
-
-  boot_device {
-    dev = ["hd", "cdrom"]
-  }
+  #firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
 
   # --- Disks ---
   disk {

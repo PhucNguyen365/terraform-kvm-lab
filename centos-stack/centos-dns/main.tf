@@ -18,15 +18,6 @@ resource "libvirt_domain" "centos_dns" {
   # --- EFI Configuration ---
   firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
 
-  # --- Kernel Arguments (CMDLINE) ---
-  # FIX: Using List of Maps for provider v0.7.6 compatibility.
-  # This ensures 'console' arguments are not merged/overwritten.
-  cmdline = var.boot_from_kernel ? [
-    { "console" = "tty0" },
-    { "console" = "ttyS0,115200n8" },         # Serial console for troubleshooting
-    { "inst.ks" = "hd:LABEL=OEMDRV:/ks.cfg" } # Kickstart file location
-  ] : []
-
   # Boot priority order
   boot_device {
     dev = ["hd", "cdrom"]

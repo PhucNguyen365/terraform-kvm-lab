@@ -14,6 +14,9 @@ OS_Resources/
 *.log
 *.tmp
 
+# ---Packer---
+packer*
+
 # --- OS SPECIFIC (UBUNTU/LINUX) ---
 .DS_Store
 .directory
