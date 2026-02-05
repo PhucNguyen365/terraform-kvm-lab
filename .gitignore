@@ -8,14 +8,13 @@
 *.iso
 *.qcow2
 *.img
-OS_Resources/
 
 # --- LOGS & TEMPORARY FILES ---
 *.log
 *.tmp
 
-# ---Packer---
-packer*
+# --- Packer ---
+packer_build/output-*/*
 
 # --- OS SPECIFIC (UBUNTU/LINUX) ---
 .DS_Store

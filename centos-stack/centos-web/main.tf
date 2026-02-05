@@ -1,8 +1,10 @@
 # --- Storage Configuration ---
 resource "libvirt_volume" "web_disk" {
-  name = "web-disk.qcow2"
-  pool = "default"
-  size = 21474836480 # 20GB
+  name   = "web-disk.qcow2"
+  pool   = "default"
+  source = abspath("${path.module}/../../packer_build/output-gui/packer-centos9-gui")
+  format = "qcow2"
+  # size = 21474836480 # 20GB
 }
 
 
@@ -17,11 +19,11 @@ resource "libvirt_domain" "centos_web" {
   }
 
   # --- EFI Configuration ---
-  firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
+  # firmware = "/usr/share/OVMF/OVMF_CODE_4M.fd"
 
-  boot_device {
-    dev = ["hd", "cdrom"]
-  }
+  # boot_device {
+  #   dev = ["hd", "cdrom"]
+  # }
 
 
   # --- Disks ---
@@ -29,13 +31,13 @@ resource "libvirt_domain" "centos_web" {
     volume_id = libvirt_volume.web_disk.id
   }
 
-  disk {
-    file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
-  }
+  # disk {
+  #   file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
+  # }
 
-  disk {
-    file = abspath("${path.module}/ksdata-centos-web.iso")
-  }
+  # disk {
+  #   file = abspath("${path.module}/ksdata-centos-web.iso")
+  # }
 
   # --- Network ---
   network_interface {
@@ -45,7 +47,7 @@ resource "libvirt_domain" "centos_web" {
 
   # --- Graphics & Console ---
   video {
-    type = "qxl"
+    type = "virtio"
   }
 
   graphics {
@@ -54,14 +56,14 @@ resource "libvirt_domain" "centos_web" {
     listen_type = "address"
   }
 
-
   console {
     type        = "pty"
     target_port = "0"
+    target_type = "serial"
   }
 }
 
 # --- Outputs ---
 output "web_server_ip" {
-  value = length(libvirt_domain.centos_web.network_interface[0].addresses) > 0 ? libvirt_domain.centos_web.network_interface[0].addresses[0] : "IP not assigned yet"
+  value = length(libvirt_domain.centos_web.network_interface[0].addresses) > 0 ? libvirt_domain.centos_web.network_interface[0].addresses[0] : "Waiting for IP..."
 }

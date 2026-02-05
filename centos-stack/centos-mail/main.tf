@@ -1,8 +1,10 @@
 # --- Storage Configuration ---
 resource "libvirt_volume" "mail_disk" {
-  name = "mail-disk.qcow2" # Unique disk name for Mail
-  pool = "default"
-  size = 21474836480 # 20GB
+  name   = "mail-disk.qcow2" # Unique disk name for Mail
+  pool   = "default"
+  source = abspath("${path.module}/../../packer_build/output-minimal/packer-centos9-min")
+  format = "qcow2"
+  # size = 21474836480 # 20GB
 }
 
 # --- Domain Configuration ---
@@ -22,12 +24,12 @@ resource "libvirt_domain" "centos_mail" {
   disk {
     volume_id = libvirt_volume.mail_disk.id
   }
-  disk {
-    file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
-  }
-  disk {
-    file = abspath("${path.module}/ksdata-centos-mail.iso")
-  }
+  # disk {
+  #   file = abspath("${path.module}/../../OS_Resources/CentOS-9-DVD.iso")
+  # }
+  # disk {
+  #   file = abspath("${path.module}/ksdata-centos-mail.iso")
+  # }
 
   # --- Network ---
   network_interface {
@@ -35,9 +37,14 @@ resource "libvirt_domain" "centos_mail" {
     wait_for_lease = true
   }
 
+  video {
+    type = "virtio"
+  }
+
   # --- Graphics & Console ---
   console {
     type        = "pty"
+    target_type = "serial"
     target_port = "0"
   }
 
